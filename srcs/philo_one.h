@@ -28,8 +28,10 @@ typedef	struct	s_philosopher
 	int				position;
 	t_input			*manifest;
 	long int		*watches;
+	long int		last_meal;
 	pthread_mutex_t	*lfork;
 	pthread_mutex_t	*rfork;
+	int				alive;
 }				t_philosopher;
 
 typedef struct	s_philo
@@ -37,6 +39,7 @@ typedef struct	s_philo
 	t_input			inputdata;
 	t_philosopher	*philosophers;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	print_mutex;
 	long int		start_time;
 }	t_philo;
 
