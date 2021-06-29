@@ -116,8 +116,8 @@ void	*routine(void *args)
 	printf("👳%d\n", philosopher->position);
 	printf("*👈%p\n", philosopher->lfork);
 	printf("*👉%p\n", philosopher->rfork);
-//	while (philosopher->alive)
-//	{
+	while (philosopher->alive)
+	{
 		philosopher->last_meal = *philosopher->watches;
 //		pthread_mutex_lock(philosopher->lfork);
 //		pthread_mutex_unlock(philosopher->lfork);
@@ -125,10 +125,16 @@ void	*routine(void *args)
 		usleep(philosopher->manifest->time_to_eat * 1000);
 		printf("🤔|%02d|поел!		|⌚️%ld|\n", philosopher->position,
 			   gettime() - *philosopher->watches);
-//		pthread_mutex_unlock(philosopher->lfork);
-//		pthread_mutex_unlock(philosopher->rfork);
+		{
+			pthread_mutex_unlock(philosopher->lfork);
+			printf("%d|%s\n", philosopher->position, "Put left fork down");
+		}
+		{
+			pthread_mutex_unlock(philosopher->rfork);
+			printf("%d|%s\n", philosopher->position, "Put right fork down");
+		}
 		usleep(philosopher->manifest->time_to_sleep * 1000);
-//	}
+	}
 	return (NULL);
 }
 
@@ -231,8 +237,6 @@ int		main (int argc, char **argv)
 	else if (ft_checkforbiddensymbols(&argv[1]))
 		printf("2wrong arguments!\n");
 	else
-		{
-			return (dinnertime(argv));
-		}
+		return (dinnertime(argv));
 	return (0);
 }

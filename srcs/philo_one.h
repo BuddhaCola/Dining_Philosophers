@@ -7,7 +7,7 @@
 # include <sys/time.h>
 
 
-#define SLEEP		0
+#define SLEEP		0	 
 #define EAT			1
 #define THINKING	2
 #define DEAD		3
