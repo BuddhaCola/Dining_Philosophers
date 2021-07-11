@@ -8,15 +8,17 @@
 #include <pthread.h>
 
 typedef struct	s_philo {
-	int				counter;
-	long			simStartTime;
-	pthread_mutex_t	*mtx_forks;
-	pthread_mutex_t	mtx_cout;
 	int				_number_of_philosophers;
 	int				_time_to_die;
 	int				_time_to_eat;
 	int				_time_to_sleep;
 	int				number_of_times_each_philosopher_must_eat;
+	int				counter;
+	long			simStartTime;
+	pthread_mutex_t	*mtx_forks;
+	pthread_mutex_t	mtx_cout;
+	int				*report;
+	int				endgame;
 }				t_philo;
 
 int		ft_atoi(const char *i);

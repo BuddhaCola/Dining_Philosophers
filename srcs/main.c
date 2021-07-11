@@ -27,27 +27,38 @@ void *routine(void *ptr) {
 	pthread_mutex_lock(&simInfo->mtx_cout);
 	nu = simInfo->counter;
 	simInfo->counter++;
-	printf("%d locked!\n", nu);
-	pthread_mutex_unlock(&simInfo->mtx_cout);
 	lfork = nu;
 	if (nu == 0)
 		rfork = simInfo->_number_of_philosophers - 1;
 	else
 		rfork = nu - 1;
-// {
-	// pthread_mutex_lock(&simInfo->mtx_forks[lfork]);
-	// philo_message(nu, "took left fork!\n", simInfo);
-	// pthread_mutex_lock(&simInfo->mtx_forks[rfork]);
-	// philo_message(nu, "took right fork!\n", simInfo);
-	// philo_message(nu, "start eating!\n", simInfo);
-	// ft_sleep(simInfo->_time_to_eat);
-	// philo_message(nu, "start sleeping!\n", simInfo);
-	// ft_sleep(simInfo->_time_to_sleep);
-	// // if (gettime() - simInfo->simStartTime >= simInfo->_time_to_die)
-	// // 	philo_message(nu, "dead! 💀\n", simInfo);
-	// pthread_mutex_unlock(&simInfo->mtx_forks[lfork]);
-	// pthread_mutex_unlock(&simInfo->mtx_forks[rfork]);}
+	pthread_mutex_unlock(&simInfo->mtx_cout);
+	while(!simInfo->endgame)
+	{
+		pthread_mutex_lock(&simInfo->mtx_forks[lfork]);
+		// philo_message(nu, "took left fork\n", simInfo);
+		pthread_mutex_lock(&simInfo->mtx_forks[rfork]);
+		// philo_message(nu, "took right fork\n", simInfo);
+		simInfo->report[nu] = gettime();
+		ft_sleep(simInfo->_time_to_eat);
+		ft_sleep(simInfo->_time_to_sleep);
+	}
 	return NULL;
+}
+
+void ending_party(t_philo *simInfo, )
+{
+	int i;
+	
+	i = 0;
+	while (i < simInfo._number_of_philosophers)
+		if (pthread_mutex_destroy(&simInfo.mtx_forks[i++]))
+			exit_fatal("forks destroy error\n");
+	if (pthread_mutex_destroy(&simInfo.mtx_cout))
+		exit_fatal("cout destroy error\n");
+	free(simInfo.mtx_forks);
+	free(folks);
+	free(simInfo.report);
 }
 
 int main (int ac, char **av)
@@ -70,23 +81,27 @@ int main (int ac, char **av)
 		int i;
 
 		i = 0;
-		while (i < simInfo._number_of_philosophers)
+		while (i < simInfo._number_of_philosophers) {
 			if (pthread_create(&folks[i++], NULL, routine, (void *)&simInfo))
 				exit_fatal("thread create error\n");
+		}
 	}
 
-	//ending party
 	{
-		// int i;
-		
-		// i = 0;
-		// while (i < simInfo._number_of_philosophers)
-		// 	if (pthread_mutex_destroy(&simInfo.mtx_forks[i++]))
-		// 		exit_fatal("forks destroy error\n");
-		// if (pthread_mutex_destroy(&simInfo.mtx_cout))
-		// 	exit_fatal("cout destroy error\n");
-		free(simInfo.mtx_forks);
-		free(folks);
+		int i;
+		while (1)
+		{
+			i = 0;
+			while (i < simInfo._number_of_philosophers)
+			{
+				if (gettime() - simInfo.report[i] >= simInfo._time_to_die)
+				{
+					simInfo.endgame = 1;
+					philo_message(i, "dead!\n", &simInfo);
+				}
+				i++;
+			}
+		}
 	}
 	return (0);
 }
