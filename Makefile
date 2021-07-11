@@ -1,13 +1,14 @@
 SRC		=	srcs/main.c \
-			srcs/ft_atoi.c
+			srcs/utils.c \
+			srcs/otherstuff.c
 
-NAME	=	philo_one
+NAME	=	philosophers
 
 OBJ		=	$(SRC:.c=.o)
 
-FLAGS	=	#-Wall -Werror -Wextra
+FLAGS	=	-Wall -Werror -Wextra
 
-all:		$(NAME)
+all:		$(NAME) clean
 
 $(NAME): $(OBJ)
 	gcc -g $(OBJ) -o $(NAME)
