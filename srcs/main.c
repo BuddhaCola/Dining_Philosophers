@@ -1,64 +1,104 @@
 # include "philo.h"
 
-#include <stdio.h> //убрать!
-
 void	philo_message(int nu, char *str, t_philo *simInfo)
 {
 	char	*nustr;
 	char	*timestr;
 
-	nustr = ft_itoa(nu);
-	timestr = ft_itoa(gettime() - simInfo->simStartTime);
 	pthread_mutex_lock(&simInfo->mtx_cout);
+	nustr = ft_itoa(nu + 1);
+	timestr = ft_itoa(timeSinceStart(simInfo->simStartTime));
+	// ft_putstr("⏳");
 	ft_putstr(timestr);
-	ft_putstr("| ");
+	ft_putstr(" ");
 	ft_putstr(nustr);
-	ft_putstr("| ");
+	ft_putstr(" ");
 	ft_putstr(str);
+	ft_putstr("\n");
 	pthread_mutex_unlock(&simInfo->mtx_cout);
+	free(nustr);
+	free(timestr);
 }
 
 void *routine(void *ptr) {
 	t_philo *simInfo = (t_philo *)ptr;
 	int	nu;
-	int	lfork;
-	int	rfork;
+	// int	lfork;
+	// int	rfork;
 
-	pthread_mutex_lock(&simInfo->mtx_cout);
-	nu = simInfo->counter;
-	simInfo->counter++;
-	lfork = nu;
-	if (nu == 0)
-		rfork = simInfo->_number_of_philosophers - 1;
-	else
-		rfork = nu - 1;
-	pthread_mutex_unlock(&simInfo->mtx_cout);
+	// pthread_mutex_lock(&simInfo->mtx_cout);
+	nu = simInfo->counter++;
+	// simInfo->counter++;
+	// lfork = nu;
+	// if (nu == 0)
+	// 	rfork = simInfo->_number_of_philosophers - 1;
+	// else
+	// 	rfork = nu - 1;
+	// pthread_mutex_unlock(&simInfo->mtx_cout);
 	while(!simInfo->endgame)
 	{
-		pthread_mutex_lock(&simInfo->mtx_forks[lfork]);
-		// philo_message(nu, "took left fork\n", simInfo);
-		pthread_mutex_lock(&simInfo->mtx_forks[rfork]);
-		// philo_message(nu, "took right fork\n", simInfo);
-		simInfo->report[nu] = gettime();
+		if (nu % 2)
+		{
+			pthread_mutex_lock(&simInfo->mtx_forks[nu]);
+			philo_message(nu, "took left fork", simInfo);
+			if (nu == 0)
+			{
+				pthread_mutex_lock(&simInfo->mtx_forks[simInfo->_number_of_philosophers - 1]);
+			} else 
+			{
+				pthread_mutex_lock(&simInfo->mtx_forks[nu - 1]);
+			}
+			philo_message(nu, "took right fork", simInfo);
+
+		}
+		else
+		{
+			if (nu == 0)
+			{
+				pthread_mutex_lock(&simInfo->mtx_forks[simInfo->_number_of_philosophers - 1]);
+			} else 
+			{
+				pthread_mutex_lock(&simInfo->mtx_forks[nu - 1]);
+			}
+			philo_message(nu, "took right fork", simInfo);
+			pthread_mutex_lock(&simInfo->mtx_forks[nu]);
+			philo_message(nu, "took left fork", simInfo);
+		}
+		simInfo->report[nu] = timeSinceStart(simInfo->simStartTime) + simInfo->_time_to_die;
+		philo_message(nu, "eating", simInfo);
 		ft_sleep(simInfo->_time_to_eat);
+
+		pthread_mutex_unlock(&simInfo->mtx_forks[nu]);
+		philo_message(nu, "put down left fork", simInfo);
+		if (nu == 0)
+			{
+				pthread_mutex_unlock(&simInfo->mtx_forks[simInfo->_number_of_philosophers - 1]);
+			} else 
+			{
+				pthread_mutex_unlock(&simInfo->mtx_forks[nu - 1]);
+			}
+		philo_message(nu, "put down right fork", simInfo);
+		
+		philo_message(nu, "fell asleep", simInfo);
 		ft_sleep(simInfo->_time_to_sleep);
+		philo_message(nu, "thinking", simInfo);
 	}
 	return NULL;
 }
 
-void ending_party(t_philo *simInfo, )
+void ending_party(t_philo *simInfo, pthread_t *folks)
 {
 	int i;
 	
 	i = 0;
-	while (i < simInfo._number_of_philosophers)
-		if (pthread_mutex_destroy(&simInfo.mtx_forks[i++]))
+	while (i < simInfo->_number_of_philosophers)
+		if (pthread_mutex_destroy(&simInfo->mtx_forks[i++]))
 			exit_fatal("forks destroy error\n");
-	if (pthread_mutex_destroy(&simInfo.mtx_cout))
+	if (pthread_mutex_destroy(&simInfo->mtx_cout))
 		exit_fatal("cout destroy error\n");
-	free(simInfo.mtx_forks);
+	free(simInfo->mtx_forks);
 	free(folks);
-	free(simInfo.report);
+	free(simInfo->report);
 }
 
 int main (int ac, char **av)
@@ -67,7 +107,7 @@ int main (int ac, char **av)
 
 	if (ac < 5 || ac > 6)
 	{
-		printf ("usage:\n\
+		ft_putstr("usage:\n\
 (1)number_of_philosophers\n\
 (2)time_to_die\n\
 (3)time_to_eat\n\
@@ -89,15 +129,17 @@ int main (int ac, char **av)
 
 	{
 		int i;
+		ft_sleep(simInfo._time_to_eat * 2);
 		while (1)
 		{
 			i = 0;
 			while (i < simInfo._number_of_philosophers)
 			{
-				if (gettime() - simInfo.report[i] >= simInfo._time_to_die)
+				if (timeSinceStart(simInfo.simStartTime) - simInfo.report[i] >= simInfo._time_to_die)
 				{
+					philo_message(i+1, "dead!💀", &simInfo);
 					simInfo.endgame = 1;
-					philo_message(i, "dead!\n", &simInfo);
+					return (0);
 				}
 				i++;
 			}

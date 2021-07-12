@@ -7,6 +7,8 @@
 #include <sys/time.h>
 #include <pthread.h>
 
+#include <stdio.h> //убрать!
+
 typedef struct	s_philo {
 	int				_number_of_philosophers;
 	int				_time_to_die;
@@ -17,7 +19,7 @@ typedef struct	s_philo {
 	long			simStartTime;
 	pthread_mutex_t	*mtx_forks;
 	pthread_mutex_t	mtx_cout;
-	int				*report;
+	long			*report;
 	int				endgame;
 }				t_philo;
 
@@ -31,6 +33,6 @@ void	exit_fatal();
 long	gettime();
 void	ft_sleep(int msec);
 t_philo	get_input(char *argv[]);
-
+long	timeSinceStart(long start);
 
 #endif // !PHILO_H

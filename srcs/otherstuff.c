@@ -7,14 +7,21 @@ long	gettime()
 	return((time.tv_sec * 1000000 + time.tv_usec) / 1000);
 }
 
-void	ft_sleep(int msec)
+long	timeSinceStart(long start)
 {
-	long	waketime;
+	return(gettime() - start);
+}
 
-	waketime = gettime() + msec;
-	while (1) {
-		if (gettime() >= waketime)
-			return;
+void	ft_sleep(int msToSleep)
+{
+	long	start;
+
+	start = gettime();
+	while (1)
+	{
+		usleep(60);
+		if (gettime() - start >= msToSleep)
+			return ;
 	}
 }
 
