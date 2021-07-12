@@ -14,8 +14,9 @@ typedef struct	s_philo {
 	int				_time_to_die;
 	int				_time_to_eat;
 	int				_time_to_sleep;
-	int				number_of_times_each_philosopher_must_eat;
+	int				_number_of_times_each_philosopher_must_eat;
 	int				counter;
+	pthread_t		*philos;
 	long			simStartTime;
 	pthread_mutex_t	*mtx_forks;
 	pthread_mutex_t	mtx_cout;
@@ -34,5 +35,7 @@ long	gettime();
 void	ft_sleep(int msec);
 t_philo	get_input(char *argv[]);
 long	timeSinceStart(long start);
+void	set_stage(t_philo *simInfo);
+void	*routine(void *ptr);
 
 #endif // !PHILO_H
