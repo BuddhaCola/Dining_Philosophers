@@ -4,7 +4,7 @@ void	philo_message(int nu, char *str, t_philo *simInfo)
 {
 	pthread_mutex_lock(&simInfo->mtx_cout);
 	printf("%04ld|philosopher %02d|%s\n",
-		timeSinceStart(simInfo->simStartTime), nu + 1, str);
+		timeSinceStart(simInfo->simStartTime), nu, str);
 	pthread_mutex_unlock(&simInfo->mtx_cout);
 }
 
@@ -14,11 +14,7 @@ void	take_forks(t_philo *simInfo, int nu)
 	{
 		pthread_mutex_lock(&simInfo->mtx_forks[nu]);
 		philo_message(nu, "took left fork", simInfo);
-		if (nu == 0)
-			pthread_mutex_lock(&simInfo->mtx_forks
-			[simInfo->_number_of_philosophers - 1]);
-		else
-			pthread_mutex_lock(&simInfo->mtx_forks[nu - 1]);
+		pthread_mutex_lock(&simInfo->mtx_forks[nu - 1]);
 		philo_message(nu, "took right fork", simInfo);
 	}
 	else
@@ -31,6 +27,37 @@ void	take_forks(t_philo *simInfo, int nu)
 		philo_message(nu, "took right fork", simInfo);
 		pthread_mutex_lock(&simInfo->mtx_forks[nu]);
 		philo_message(nu, "took left fork", simInfo);
+
+	}
+
+
+	simInfo->report[nu] = timeSinceStart(simInfo->simStartTime)
+			+ simInfo->_time_to_die;
+	philo_message(nu, "eating", simInfo);
+	ft_sleep(simInfo->_time_to_eat);
+
+
+	if (nu % 2)
+	{
+		
+			pthread_mutex_unlock(&simInfo->mtx_forks[nu - 1]);
+		philo_message(nu, "put down right fork", simInfo);
+
+		pthread_mutex_unlock(&simInfo->mtx_forks[nu]);
+		philo_message(nu, "put down left fork", simInfo);
+	}
+	else
+	{
+		
+		pthread_mutex_unlock(&simInfo->mtx_forks[nu]);
+		philo_message(nu, "put down left fork", simInfo);
+		if (nu == 0)
+			pthread_mutex_unlock(&simInfo->mtx_forks
+			[simInfo->_number_of_philosophers - 1]);
+		else
+			pthread_mutex_unlock(&simInfo->mtx_forks[nu - 1]);
+		philo_message(nu, "put down right fork", simInfo);
+	
 	}
 }
 
@@ -59,7 +86,8 @@ void	*dietcontrol(void *ptr)
 		{	pthread_mutex_lock(&simInfo->mtx_cout);
 			simInfo->endgame = 1;
 			printf("that's all folks! fed = %d\n", fed);
-			pthread_mutex_unlock(&simInfo->mtx_cout);}
+			// pthread_mutex_unlock(&simInfo->mtx_cout);
+			}
 		}
 	return (NULL);
 }
@@ -74,18 +102,16 @@ void	*routine(void *ptr)
 	while (!simInfo->endgame)
 	{
 		take_forks(simInfo, nu);
-		simInfo->report[nu] = timeSinceStart(simInfo->simStartTime)
-			+ simInfo->_time_to_die;
-		philo_message(nu, "eating", simInfo);
-		if (simInfo->_number_of_times_each_philosopher_must_eat)
-			simInfo->diet[nu]++;
-		ft_sleep(simInfo->_time_to_eat);
-		pthread_mutex_unlock(&simInfo->mtx_forks[nu]);
-		if (nu == 0)
-			pthread_mutex_unlock(&simInfo->mtx_forks
-			[simInfo->_number_of_philosophers - 1]);
-		else
-			pthread_mutex_unlock(&simInfo->mtx_forks[nu - 1]);
+		
+		// if (simInfo->_number_of_times_each_philosopher_must_eat)
+		// 	simInfo->diet[nu]++;
+		// ft_sleep(simInfo->_time_to_eat);
+		// pthread_mutex_unlock(&simInfo->mtx_forks[nu]);
+		// if (nu == 0)
+		// 	pthread_mutex_unlock(&simInfo->mtx_forks
+		// 	[simInfo->_number_of_philosophers - 1]);
+		// else
+		// 	pthread_mutex_unlock(&simInfo->mtx_forks[nu - 1]);
 		philo_message(nu, "fell asleep", simInfo);
 		ft_sleep(simInfo->_time_to_sleep);
 		philo_message(nu, "thinking", simInfo);
@@ -97,10 +123,12 @@ void	ending_party(t_philo *simInfo, pthread_t *folks)
 {
 	int	i;
 
+	// philo_message(666, "ending!\n", simInfo);
+
 	i = 0;
 	while (i < simInfo->_number_of_philosophers)
 	{
-		pthread_join(folks[i], NULL);
+		// pthread_join(folks[i], NULL);
 		pthread_mutex_destroy(&simInfo->mtx_forks[i++]);
 	}
 	pthread_mutex_destroy(&simInfo->mtx_cout);
@@ -114,11 +142,11 @@ void	ending_party(t_philo *simInfo, pthread_t *folks)
 void	the_feast(t_philo *simInfo)
 {
 	int	i;
-	pthread_t	*dietcontrol_thread = malloc(sizeof(pthread_t *));
+	// pthread_t	*dietcontrol_thread = malloc(sizeof(pthread_t *));
 
 	ft_sleep(simInfo->_time_to_eat * 2);
-	if (simInfo->_number_of_times_each_philosopher_must_eat)
-		pthread_create(dietcontrol_thread, NULL, dietcontrol, simInfo);
+	// if (simInfo->_number_of_times_each_philosopher_must_eat)
+	// 	pthread_create(dietcontrol_thread, NULL, dietcontrol, simInfo);
 	while (!simInfo->endgame)
 	{
 		i = 0;
@@ -139,7 +167,7 @@ void	the_feast(t_philo *simInfo)
 			i++;
 		}
 	}
-	pthread_join(*dietcontrol_thread, NULL);
+	// pthread_join(*dietcontrol_thread, NULL);
 }
 
 int	main(int ac, char **av)

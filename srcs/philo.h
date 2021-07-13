@@ -22,7 +22,7 @@ typedef struct	s_philo
 	pthread_mutex_t	mtx_cout;
 	long			*report;
 	int				*diet;
-	pthread_mutex_t *diet_update;
+	// pthread_mutex_t *diet_update;
 	int				endgame;
 }				t_philo;
 
