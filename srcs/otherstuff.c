@@ -35,13 +35,18 @@ t_philo	get_input(char *argv[])
 	simInfo._time_to_eat = ft_atoi(argv[3]);
 	simInfo._time_to_sleep = ft_atoi(argv[4]);
 	if (argv[5])
+	{
 		simInfo._number_of_times_each_philosopher_must_eat = ft_atoi(argv[5]);
+		simInfo.diet = malloc(sizeof(int) * simInfo._number_of_philosophers);
+		memset(simInfo.diet, 0, sizeof(int) * simInfo._number_of_philosophers);
+	}
 	if (simInfo._number_of_philosophers <= 0
 		|| simInfo._time_to_die <= 0
 		|| simInfo._time_to_eat <= 0
-		|| simInfo._time_to_sleep <= 0)
+		|| simInfo._time_to_sleep <= 0
+		|| (argv[5] && simInfo._number_of_times_each_philosopher_must_eat <= 0))
 	{
-		printf("wrong input");
+		printf("wrong input!\n");
 		exit(0);
 	}
 	return (simInfo);

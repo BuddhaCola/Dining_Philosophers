@@ -6,10 +6,10 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <pthread.h>
+#include <stdio.h>
 
-#include <stdio.h> //убрать!
-
-typedef struct	s_philo {
+typedef struct	s_philo
+{
 	int				_number_of_philosophers;
 	int				_time_to_die;
 	int				_time_to_eat;
@@ -21,6 +21,8 @@ typedef struct	s_philo {
 	pthread_mutex_t	*mtx_forks;
 	pthread_mutex_t	mtx_cout;
 	long			*report;
+	int				*diet;
+	pthread_mutex_t *diet_update;
 	int				endgame;
 }				t_philo;
 
