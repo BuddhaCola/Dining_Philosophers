@@ -20,9 +20,10 @@ typedef struct	s_philo
 	long			simStartTime;
 	pthread_mutex_t	*mtx_forks;
 	pthread_mutex_t	mtx_cout;
+	pthread_mutex_t	mtx_status;
 	long			*report;
 	int				*diet;
-	// pthread_mutex_t *diet_update;
+	int				fed;
 	int				endgame;
 }				t_philo;
 
