@@ -20,7 +20,7 @@ You give it as arguments simulation parameters. Those are:\
 \
 **Usage**\
 Git clone the repository by entering\
-$ git clone https://github.com/BuddhaCola/Dining_Philosophers.git\
+$ git clone https://github.com/BuddhaCola/Dining_Philosophers.git \
 cd into it\
 $ cd Dining_Philosophers\
 This is a Makefile project\
