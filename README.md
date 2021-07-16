@@ -11,7 +11,7 @@ Each philosopher must alternately think and eat. However, a philosopher can only
 **Dining_Philosophers** is a termainal application implementing a simulation of a philosopher's life.\
 Philosopher tries to take the fork on his left and the one on his right, eats spaghetti and after that put down both forks. Then it sleeps, and after that thinks, waiting for his neighbors to put down their forks. After taking both forks again, cycle continues. One of simulation parameters is time_to_die. If the time interval between ецщ meals exceeds this parameter, philosopher dies and simulation stops.
 
-You give it as arguments simulation parameters. Those are:\
+You give the program simulation parameters as program arguments. Those are:\
 **number_of_philosophers**\
 **time_to_die**\
 **time_to_eat**\
