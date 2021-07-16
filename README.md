@@ -23,8 +23,7 @@ Git clone the repository by entering\
 $ git clone https://github.com/BuddhaCola/Dining_Philosophers.git \
 cd into it\
 $ cd Dining_Philosophers\
-This is a Makefile project\
-Compile it by entering\
+This is a Makefile project. Compile it by entering\
 $ make\
 After that you can lauch program by entering\
 $ ./philosophers [params]\
