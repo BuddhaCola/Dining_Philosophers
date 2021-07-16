@@ -9,7 +9,7 @@ Each philosopher must alternately think and eat. However, a philosopher can only
 
 **Subject**\
 **Dining_Philosophers** is a termainal application implementing a simulation of a philosopher's life.\
-Philosopher tries to take the fork on his left and the one on his right, then he eats, pu down both forks. Then sleeps, and after that thinks, waiting for his neighbors to put down their forks. After taking both forks again, cycle continues.
+Philosopher tries to take the fork on his left and the one on his right, then he eats and after that put down both forks. Then it sleeps, and after that thinks, waiting for his neighbors to put down their forks. After taking both forks again, cycle continues.
 
 You give it as arguments simulation parameters. Those are:\
 **number_of_philosophers**\
