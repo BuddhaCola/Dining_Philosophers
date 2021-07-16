@@ -31,7 +31,7 @@ void	whatTheFork(t_philo *simInfo, int nu, int (*fun)(pthread_mutex_t *))
 		philo_message(nu, "took right fork", simInfo);
 }
 
-int	sufferLoop(t_philo *simInfo, int nu)
+int	sufferLoop(t_philo *simInfo, int nu, int fed[2])
 {
 	whatTheFork(simInfo, nu, &pthread_mutex_lock);
 	pthread_mutex_lock(&simInfo->mtx_status);
@@ -39,16 +39,25 @@ int	sufferLoop(t_philo *simInfo, int nu)
 		return (1);
 	if (!simInfo->endgame)
 		simInfo->report[nu - 1] = timeSinceStart(simInfo->simStartTime);
-	if (simInfo->diet && !simInfo->endgame)
-	{
-		simInfo->diet[nu - 1]++;
-		// pthread_mutex_lock(&simInfo->mtx_cout);
-		printf("simInfo->diet[%d] = %d\n", nu - 1, simInfo->diet[nu - 1]);
-		// printf("simInfo->report[%d] = %ld\n", nu, simInfo->report[nu - 1]);
-		// pthread_mutex_unlock(&simInfo->mtx_cout);
-	}
 	pthread_mutex_unlock(&simInfo->mtx_status);
 	philo_message(nu, "eat", simInfo);
+	if (simInfo->diet)
+	{
+		pthread_mutex_lock(&simInfo->mtx_status);
+		if (!fed[1])
+		{
+			philo_message(nu, "updated his diet", simInfo);
+			fed[0]++;
+			if (fed[0] >= simInfo->_number_of_times_each_philosopher_must_eat)
+			{
+				fed[1] = 1;
+				philo_message(nu, "fed_up!", simInfo);
+				simInfo->fed++;
+				// return (1);
+			}
+		}
+		pthread_mutex_unlock(&simInfo->mtx_status);
+	}
 	if (philo_sleep(simInfo, simInfo->_time_to_eat))
 		return (1);
 	whatTheFork(simInfo, nu, &pthread_mutex_unlock);
@@ -63,7 +72,10 @@ void	*routine(void *ptr)
 {
 	t_philo	*simInfo;
 	int		nu;
+	int		fed[2];
 
+	fed[0] = 0;
+	fed[1] = 0;
 	simInfo = (t_philo *)ptr;
 	pthread_mutex_lock(&simInfo->mtx_status);
 	nu = simInfo->counter++ + 1;
@@ -72,8 +84,8 @@ void	*routine(void *ptr)
 		if (philo_sleep(simInfo, simInfo->_time_to_eat))
 			return (NULL);
 	while (!simInfo->endgame)
-		if (sufferLoop(simInfo, nu))
-			return(NULL);
+		if (sufferLoop(simInfo, nu, fed))
+			break ;
 	return (NULL);
 }
 
@@ -140,7 +152,28 @@ void *monitor(void *ptr)
 					// pthread_mutex_unlock(&simInfo->mtx_cout);
 					return NULL;
 			}
+			ft_sleep(5);
 			i++;
+		}
+	}
+	return NULL;
+}
+
+void *diet_monitor(void *ptr)
+{
+	t_philo *simInfo;
+
+	simInfo = (t_philo *)ptr;
+	while (!simInfo->endgame)
+	{
+		if (simInfo->fed >= simInfo->_number_of_philosophers)
+		{
+			pthread_mutex_lock(&simInfo->mtx_status);
+			pthread_mutex_lock(&simInfo->mtx_cout);
+			simInfo->endgame = 1;
+			printf("%04ld|that's all folks!\n", timeSinceStart(simInfo->simStartTime));
+			ft_sleep(simInfo->_time_to_die);
+			return NULL;
 		}
 	}
 	return NULL;
@@ -151,6 +184,7 @@ int	main(int ac, char **av)
 	t_philo		simInfo;
 	int			i;
 	pthread_t	*monitor_t = malloc(sizeof(pthread_t));
+	pthread_t	*diet_monitor_t = malloc(sizeof(pthread_t));
 
 	if (ac < 5 || ac > 6)
 	{
@@ -176,6 +210,9 @@ int	main(int ac, char **av)
 	}
 	if (pthread_create(monitor_t, NULL, monitor, (void *)&simInfo))
 		exit_fatal("thread create error\n");
+	if (simInfo.diet)
+		if (pthread_create(diet_monitor_t, NULL, diet_monitor, (void *)&simInfo))
+			exit_fatal("thread create error\n");
 	pthread_join(*monitor_t, NULL);
 	free(monitor_t);
 	ending_party(&simInfo);

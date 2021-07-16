@@ -9,8 +9,22 @@ Each philosopher must alternately think and eat. However, a philosopher can only
 
 **Dining_Philosophers** is a termainal application implementing a simulation of a philosopher's life. You give it as arguments simulation parameters.\
 Those are\
-(1)number_of_philosophers
-(2)time_to_die
-(3)time_to_eat
-(4)time_to_sleep
-(5)(optional)number_of_times_each_philosopher_must_eat
+number_of_philosophers\
+time_to_die\
+time_to_eat\
+time_to_sleep\
+(optional) number_of_times_each_philosopher_must_eat\
+\
+**usage**\
+Git clone the repository by entering\
+$ git clone https://github.com/BuddhaCola/Dining_Philosophers.git\
+cd into it\
+$ cd Dining_Philosophers\
+This is a Makefile project\
+Compile it by entering\
+$ make\
+After that you can lauch program by entering\
+$ ./philosophers <args>\
+replacing <args> with parameters.\
+For example\
+$ ./philosophers 5 410 200 200
