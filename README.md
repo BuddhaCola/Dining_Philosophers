@@ -18,7 +18,7 @@ You give it as arguments simulation parameters. Those are:\
 **time_to_sleep**\
 **(optional) number_of_times_each_philosopher_must_eat**\
 \
-**usage**\
+**Usage**\
 Git clone the repository by entering\
 $ git clone https://github.com/BuddhaCola/Dining_Philosophers.git\
 cd into it\
