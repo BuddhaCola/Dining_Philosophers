@@ -27,7 +27,7 @@ This is a Makefile project\
 Compile it by entering\
 $ make\
 After that you can lauch program by entering\
-$ ./philosophers <args>\
-replacing <args> with parameters.\
+$ ./philosophers <params>\
+replacing <params> with parameters.\
 For example\
 $ ./philosophers 5 410 200 200
