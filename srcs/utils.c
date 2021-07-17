@@ -39,64 +39,8 @@ void	ft_putstr_fd(char *str, int fd)
 	write(fd, str, ft_strlen(str));
 }
 
-void	ft_putstr(char *str)
-{
-	ft_putstr_fd(str, 1);
-}
-
 void	exit_fatal(char *str)
 {
 	ft_putstr_fd(str, 2);
 	exit(-1);
-}
-
-//itoa
-static int	ft_digits(int n)
-{
-	int				i;
-	unsigned int	nu;
-
-	i = 0;
-	if (n < 0)
-	{
-		nu = ((unsigned int)(n * -1));
-		i++;
-	}
-	else
-		nu = (unsigned int)n;
-	while (nu >= 10)
-	{
-		nu /= 10;
-		i++;
-	}
-	return (i + 1);
-}
-
-char		*ft_itoa(int n)
-{
-	char			*asc;
-	int				len;
-	unsigned int	nu;
-
-	len = ft_digits(n);
-	asc = malloc(sizeof(char) * len + 1);
-	if (!(asc))
-		return (NULL);
-	memset(asc, 0, len + 1);
-	if (n < 0)
-	{
-		*asc = '-';
-		nu = ((unsigned int)(n * -1));
-	}
-	else
-		nu = (unsigned int)n;
-	len--;
-	while (nu >= 10)
-	{
-		*(asc + len) = nu % 10 + '0';
-		nu /= 10;
-		len--;
-	}
-	*(asc + len) = nu % 10 + '0';
-	return (asc);
 }

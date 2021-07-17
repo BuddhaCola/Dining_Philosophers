@@ -20,7 +20,6 @@ typedef struct	s_philo
 	long			simStartTime;
 	pthread_mutex_t	*mtx_forks;
 	pthread_mutex_t	mtx_cout;
-	// pthread_mutex_t	mtx_status;
 	long			*report;
 	int				*diet;
 	int				fed;
@@ -40,5 +39,10 @@ t_philo	get_input(char *argv[]);
 long	timeSinceStart(long start);
 void	set_stage(t_philo *simInfo);
 void	*routine(void *ptr);
+void	whatTheFork(t_philo *simInfo, int nu, int (*fun)(pthread_mutex_t *));
+int		sufferLoop(t_philo *simInfo, int nu, int fed[2]);
+void	*routine(void *ptr);
+void 	*monitor(void *ptr);
+void 	*diet_monitor(void *ptr);
 
 #endif // !PHILO_H

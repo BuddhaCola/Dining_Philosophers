@@ -1,5 +1,7 @@
 SRC		=	srcs/main.c \
 			srcs/utils.c \
+			srcs/monitor.c \
+			srcs/philo_cycle.c \
 			srcs/otherstuff.c
 
 NAME	=	philosophers
