@@ -18,12 +18,8 @@ void	ft_sleep(int msToSleep)
 	long	start;
 
 	start = gettime();
-	while (1)
-	{
-		usleep(60);
-		if (gettime() - start >= msToSleep)
-			return ;
-	}
+	while (gettime() - start >= msToSleep)
+		usleep(100);
 }
 
 t_philo	get_input(char *argv[])
@@ -58,7 +54,7 @@ void	set_stage(t_philo *simInfo)
 	simInfo->mtx_forks = malloc(sizeof(pthread_mutex_t)
 			* simInfo->_number_of_philosophers);
 	pthread_mutex_init(&simInfo->mtx_cout, NULL);
-	pthread_mutex_init(&simInfo->mtx_status, NULL);
+	// pthread_mutex_init(&simInfo->mtx_status, NULL);
 	simInfo->report = malloc(sizeof(int) * simInfo->_number_of_philosophers);
 	simInfo->endgame = 0;
 	if (simInfo->_number_of_times_each_philosopher_must_eat)
