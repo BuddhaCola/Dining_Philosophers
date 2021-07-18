@@ -1,22 +1,4 @@
-# include "philo.h"
-
-void	philo_message(int nu, char *str, t_philo *simInfo)
-{
-	if (simInfo->endgame)
-		return ;
-	pthread_mutex_lock(&simInfo->mtx_cout);
-	if (!simInfo->endgame)
-		printf("%04ld|philosopher %02d|%s\n", timeSinceStart(simInfo->simStartTime), nu, str);
-	pthread_mutex_unlock(&simInfo->mtx_cout);
-}
-
-int		philo_sleep(t_philo *simInfo, long toWait)
-{
-	ft_sleep(toWait);
-	if (simInfo->endgame)
-		return (1);
-	return(0);
-}
+#include "philo.h"
 
 void	whatTheFork(t_philo *simInfo, int nu, int (*fun)(pthread_mutex_t *))
 {
@@ -31,6 +13,20 @@ void	whatTheFork(t_philo *simInfo, int nu, int (*fun)(pthread_mutex_t *))
 		philo_message(nu, "took right fork", simInfo);
 }
 
+void	update_diet(int nu, t_philo *simInfo, int fed[2])
+{
+	if (fed[1] == 0)
+	{
+		fed[0]++;
+		if (fed[0] >= simInfo->_number_of_times_each_philosopher_must_eat)
+		{
+			fed[1] = 1;
+			philo_message(nu, "fed_up!", simInfo);
+			simInfo->fed++;
+		}
+	}
+}
+
 int	sufferLoop(t_philo *simInfo, int nu, int fed[2])
 {
 	whatTheFork(simInfo, nu, &pthread_mutex_lock);
@@ -40,18 +36,7 @@ int	sufferLoop(t_philo *simInfo, int nu, int fed[2])
 		simInfo->report[nu - 1] = timeSinceStart(simInfo->simStartTime);
 	philo_message(nu, "eat", simInfo);
 	if (simInfo->diet)
-	{
-		if (!fed[1])
-		{
-			fed[0]++;
-			if (fed[0] >= simInfo->_number_of_times_each_philosopher_must_eat)
-			{
-				fed[1] = 1;
-				philo_message(nu, "fed_up!", simInfo);
-				simInfo->fed++;
-			}
-		}
-	}
+		update_diet(nu, simInfo, fed);
 	if (philo_sleep(simInfo, simInfo->_time_to_eat))
 		return (1);
 	whatTheFork(simInfo, nu, &pthread_mutex_unlock);

@@ -10,7 +10,7 @@ OBJ		=	$(SRC:.c=.o)
 
 FLAGS	=	-Wall -Werror -Wextra
 
-all:		$(NAME) clean
+all:		$(NAME)
 
 $(NAME): $(OBJ)
 	gcc -g $(OBJ) -o $(NAME)

@@ -1,4 +1,9 @@
-# include "philo.h"
+#include "philo.h"
+
+long	timeSinceStart(long start)
+{
+	return (gettime() - start);
+}
 
 int	ft_atoi(const char *s)
 {
@@ -24,14 +29,14 @@ int	ft_atoi(const char *s)
 	return (i * minus);
 }
 
-int		ft_strlen(char *str)
+int	ft_strlen(char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (str[i])
 		i++;
-	return i;
+	return (i);
 }
 
 void	ft_putstr_fd(char *str, int fd)
