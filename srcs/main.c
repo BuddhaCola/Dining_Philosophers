@@ -32,13 +32,14 @@ int	main(int ac, char **av)
 	if (threads_creation(&simInfo))
 		return (1);
 	if (pthread_create(monitor_t, NULL, monitor, (void *)&simInfo))
-		exit_fatal("thread create error\n");
+		return (exit_fatal("thread create error\n"));
 	if (simInfo.diet)
 		if (pthread_create(diet_monitor_t, NULL,
 				diet_monitor, (void *)&simInfo))
-			exit_fatal("thread create error\n");
+			return (exit_fatal("thread create error\n"));
 	pthread_join(*monitor_t, NULL);
 	free(monitor_t);
+	free(diet_monitor_t);
 	ending_party(&simInfo);
 	return (0);
 }

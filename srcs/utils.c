@@ -44,8 +44,8 @@ void	ft_putstr_fd(char *str, int fd)
 	write(fd, str, ft_strlen(str));
 }
 
-void	exit_fatal(char *str)
+int	exit_fatal(char *str)
 {
 	ft_putstr_fd(str, 2);
-	exit(-1);
+	return (-1);
 }

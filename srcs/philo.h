@@ -31,8 +31,7 @@ int		ft_strlen(char *str);
 void	ft_putstr_fd(char *str, int fd);
 void	ft_putstr(char *str);
 char	*ft_itoa(int n);
-
-void	exit_fatal(void);
+int		exit_fatal(char *str);
 long	gettime(void);
 void	ft_sleep(int msec);
 

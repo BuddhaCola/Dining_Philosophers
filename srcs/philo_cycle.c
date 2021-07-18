@@ -3,13 +3,13 @@
 void	whatTheFork(t_philo *simInfo, int nu, int (*fun)(pthread_mutex_t *))
 {
 	fun(&simInfo->mtx_forks[nu]);
-	if (fun != pthread_mutex_lock)
+	if (fun == pthread_mutex_lock)
 		philo_message(nu, "took left fork", simInfo);
 	if (nu == simInfo->_number_of_philosophers)
 		fun(&simInfo->mtx_forks[0]);
 	else
 		fun(&simInfo->mtx_forks[nu + 1]);
-	if (fun != pthread_mutex_lock)
+	if (fun == pthread_mutex_lock)
 		philo_message(nu, "took right fork", simInfo);
 }
 
