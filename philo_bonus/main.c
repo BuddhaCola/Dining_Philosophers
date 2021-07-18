@@ -1,0 +1,49 @@
+#include "philo.h"
+
+void	ending_party(t_philo *simInfo)
+{
+	int	i;
+
+	i = 0;
+	while (i < simInfo->_number_of_philosophers)
+	{
+		pthread_detach(simInfo->philos[i++]);
+		sem_post(simInfo->sem_forks);
+	}
+	if ((sem_close(simInfo->sem_cout) == -1))
+		printf("sem_close error!\n");
+	if ((sem_close(simInfo->sem_forks) == -1))
+		printf("sem_close error!\n");
+	sem_unlink("sem_cout");
+	sem_unlink("sem_forks");
+	free(simInfo->report);
+	free(simInfo->philos);
+	if (simInfo->_number_of_times_each_philosopher_must_eat)
+		free(simInfo->diet);
+}
+
+int	main(int ac, char **av)
+{
+	t_philo		simInfo;
+	pthread_t	*monitor_t;
+	pthread_t	*diet_monitor_t;
+
+	monitor_t = malloc(sizeof(pthread_t));
+	diet_monitor_t = malloc(sizeof(pthread_t));
+	if (get_input(ac, av, &simInfo))
+		return (0);
+	set_stage(&simInfo);
+	if (threads_creation(&simInfo))
+		return (1);
+	if (pthread_create(monitor_t, NULL, monitor, (void *)&simInfo))
+		return (exit_fatal("thread create error\n"));
+	if (simInfo.diet)
+		if (pthread_create(diet_monitor_t, NULL,
+				diet_monitor, (void *)&simInfo))
+			return (exit_fatal("thread create error\n"));
+	pthread_join(*monitor_t, NULL);
+	free(monitor_t);
+	free(diet_monitor_t);
+	ending_party(&simInfo);
+	return (0);
+}

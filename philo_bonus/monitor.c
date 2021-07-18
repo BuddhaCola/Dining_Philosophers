@@ -4,11 +4,11 @@ void	philo_message(int nu, char *str, t_philo *simInfo)
 {
 	if (simInfo->endgame)
 		return ;
-	pthread_mutex_lock(&simInfo->mtx_cout);
+	sem_wait(simInfo->sem_cout);
 	if (!simInfo->endgame)
 		printf("%04ld|philosopher %02d|%s\n",
 			timeSinceStart(simInfo->simStartTime), nu, str);
-	pthread_mutex_unlock(&simInfo->mtx_cout);
+	sem_post(simInfo->sem_cout);
 }
 
 int	philo_sleep(t_philo *simInfo, long toWait)
@@ -17,6 +17,18 @@ int	philo_sleep(t_philo *simInfo, long toWait)
 	if (simInfo->endgame)
 		return (1);
 	return (0);
+}
+
+void	stopIt(t_philo *simInfo, int i)
+{
+	sem_wait(simInfo->sem_cout);
+	if (!simInfo->endgame)
+		printf("%04ld|philosopher %02d|is DEAD! (last meal %ld)\n",
+			timeSinceStart(simInfo->simStartTime),
+			i + 1, simInfo->report[i]);
+	simInfo->endgame = 1;
+	ft_sleep(simInfo->_time_to_die);
+	sem_post(simInfo->sem_cout);
 }
 
 void	*monitor(void *ptr)
@@ -30,14 +42,10 @@ void	*monitor(void *ptr)
 		i = 0;
 		while (i < simInfo->_number_of_philosophers)
 		{
-			if (timeSinceStart(simInfo->simStartTime) - simInfo->report[i] >= simInfo->_time_to_die)
+			if (timeSinceStart(simInfo->simStartTime)
+				- simInfo->report[i] >= simInfo->_time_to_die)
 			{
-				pthread_mutex_lock(&simInfo->mtx_cout);
-				simInfo->endgame = 1;
-				printf("%04ld|philosopher %02d|is DEAD! (last meal %ld)\n",
-					timeSinceStart(simInfo->simStartTime),
-					i + 1, simInfo->report[i]);
-				ft_sleep(simInfo->_time_to_eat + simInfo->_time_to_sleep);
+				stopIt(simInfo, i);
 				return (NULL);
 			}
 			ft_sleep(5);
@@ -56,11 +64,12 @@ void	*diet_monitor(void *ptr)
 	{
 		if (simInfo->fed >= simInfo->_number_of_philosophers)
 		{
-			pthread_mutex_lock(&simInfo->mtx_cout);
+			sem_wait(simInfo->sem_cout);
 			simInfo->endgame = 1;
 			printf("%04ld|that's all folks!\n",
 				timeSinceStart(simInfo->simStartTime));
 			ft_sleep(simInfo->_time_to_die);
+			sem_post(simInfo->sem_cout);
 			return (NULL);
 		}
 	}
