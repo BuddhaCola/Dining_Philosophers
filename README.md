@@ -19,15 +19,23 @@ You give the program simulation parameters as program arguments. Those are:\
 **(optional) number_of_times_each_philosopher_must_eat**\
 ## **usage**
 Git clone the repository by entering\
-$ git clone https://github.com/BuddhaCola/Dining_Philosophers.git \
-cd into it\
-$ cd Dining_Philosophers\
-This is a Makefile project. Compile it by entering\
-$ make\
+```
+git clone https://github.com/BuddhaCola/Dining_Philosophers.git
+```
+cd into it
+```
+cd Dining_Philosophers
+```
+This is a Makefile project. Compile it by entering
+```
+make
+```
 After that you can lauch program by entering\
-$ ./philosophers [params]\
+./philosophers [params]\
 replacing [params] with parameters.\
-For example\
-$ ./philosophers 5 410 200 200\
+For example
+```
+./philosophers 5 410 200 200
+```
 \
 ![Screen-Recording-2021-09-23-at-1 55 34-PM](https://user-images.githubusercontent.com/63592194/134495648-ac69f3ad-5cb5-49dc-bd86-c86cabbf827e.gif)
